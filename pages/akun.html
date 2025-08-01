@@ -1623,13 +1623,17 @@
           <div class="modal-body" style="padding: 30px">
             <div id="reviewContent">
               <!-- My existing review -->
-              <div id="existingReview" style="display: none;">
+              <div id="existingReview" style="display: none">
                 <div class="alert alert-info">
                   <h6><i class="fas fa-info-circle me-2"></i>Ulasan Anda</h6>
                   <div id="myReviewText"></div>
                   <div id="myReviewRating"></div>
                   <div id="myReviewDate"></div>
-                  <button type="button" class="btn btn-warning btn-sm mt-2" onclick="editMyReview()">
+                  <button
+                    type="button"
+                    class="btn btn-warning btn-sm mt-2"
+                    onclick="editMyReview()"
+                  >
                     <i class="fas fa-edit me-1"></i>Edit Ulasan
                   </button>
                 </div>
@@ -1639,9 +1643,10 @@
               <form id="reviewForm">
                 <div class="mb-4">
                   <label class="form-label fw-bold">
-                    <i class="fas fa-star me-2" style="color: #eec55b;"></i>Rating
+                    <i class="fas fa-star me-2" style="color: #eec55b"></i
+                    >Rating
                   </label>
-                  <div class="rating-container" style="margin-top: 10px;">
+                  <div class="rating-container" style="margin-top: 10px">
                     <div class="stars" id="starRating">
                       <i class="fas fa-star" data-rating="1"></i>
                       <i class="fas fa-star" data-rating="2"></i>
@@ -1649,14 +1654,19 @@
                       <i class="fas fa-star" data-rating="4"></i>
                       <i class="fas fa-star" data-rating="5"></i>
                     </div>
-                    <span id="ratingText" style="margin-left: 10px; color: #6c757d;">Pilih rating</span>
+                    <span
+                      id="ratingText"
+                      style="margin-left: 10px; color: #6c757d"
+                      >Pilih rating</span
+                    >
                   </div>
-                  <input type="hidden" id="selectedRating" value="0">
+                  <input type="hidden" id="selectedRating" value="0" />
                 </div>
 
                 <div class="mb-4">
                   <label for="reviewText" class="form-label fw-bold">
-                    <i class="fas fa-comment me-2" style="color: #eec55b;"></i>Ulasan Anda
+                    <i class="fas fa-comment me-2" style="color: #eec55b"></i
+                    >Ulasan Anda
                   </label>
                   <textarea
                     class="form-control"
@@ -1666,7 +1676,8 @@
                     maxlength="500"
                   ></textarea>
                   <div class="form-text">
-                    <span id="charCount">0</span>/500 karakter (minimal 10 karakter)
+                    <span id="charCount">0</span>/500 karakter (minimal 10
+                    karakter)
                   </div>
                 </div>
 
@@ -2452,16 +2463,13 @@
 
         // Validate passwords match
         if (newPassword !== confirmPassword) {
-          showAlert(
-            "Password baru dan konfirmasi password tidak sama!",
-            "danger"
-          );
+          showErrorToast("Password baru dan konfirmasi password tidak sama!");
           return;
         }
 
         // Validate password length
         if (newPassword.length < 6) {
-          showAlert("Password baru minimal 6 karakter!", "danger");
+          showErrorToast("Password baru minimal 6 karakter!");
           return;
         }
 
@@ -2484,7 +2492,7 @@
           const result = await response.json();
 
           if (response.ok) {
-            showAlert(result.message, "success");
+            showSuccessToast(result.message);
 
             // Close modal and reset form
             const modal = bootstrap.Modal.getInstance(
@@ -2493,11 +2501,11 @@
             modal.hide();
             form.reset();
           } else {
-            showAlert(result.message || "Gagal mengubah password", "danger");
+            showErrorToast(result.message || "Gagal mengubah password");
           }
         } catch (error) {
           console.error("Error changing password:", error);
-          showAlert("Terjadi kesalahan saat mengubah password", "danger");
+          showErrorToast("Terjadi kesalahan saat mengubah password");
         }
       }
 
@@ -2534,7 +2542,7 @@
           const userData = await getCurrentUser();
 
           if (!userData) {
-            showAlert("Gagal memuat data pengguna", "danger");
+            showErrorToast("Gagal memuat data pengguna");
             modal.hide();
             return;
           }
@@ -2659,7 +2667,7 @@
           }, 100);
         } catch (error) {
           console.error("Error opening payment modal:", error);
-          showAlert("Terjadi kesalahan saat memuat data pembayaran", "danger");
+          showErrorToast("Terjadi kesalahan saat memuat data pembayaran");
           const modal = bootstrap.Modal.getInstance(
             document.getElementById("paymentModal")
           );
@@ -2913,10 +2921,7 @@
         const paymentIdInput = document.getElementById("paymentId");
 
         if (!buktiInput || !buktiInput.files || !buktiInput.files[0]) {
-          showAlert(
-            "Silakan pilih file bukti pembayaran terlebih dahulu",
-            "danger"
-          );
+          showErrorToast("Silakan pilih file bukti pembayaran terlebih dahulu");
           return;
         }
 
@@ -2924,7 +2929,7 @@
         const file = buktiInput.files[0];
         const maxSize = 5 * 1024 * 1024; // 5MB
         if (file && file.size > maxSize) {
-          showAlert("Ukuran file terlalu besar. Maksimal 5MB", "danger");
+          showErrorToast("Ukuran file terlalu besar. Maksimal 5MB");
           return;
         }
 
@@ -2946,7 +2951,7 @@
           const userData = await getCurrentUser();
           const userEmail = userData.email;
           if (!userEmail) {
-            showAlert("Data pengguna tidak ditemukan", "danger");
+            showErrorToast("Data pengguna tidak ditemukan");
             return;
           }
 
@@ -2958,7 +2963,7 @@
               `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/user/${userEmail}`
             );
             if (!reservationResponse || !reservationResponse.ok) {
-              showAlert("Gagal memuat data reservasi", "danger");
+              showErrorToast("Gagal memuat data reservasi");
               return;
             }
             const reservationResult = await reservationResponse.json();
@@ -2967,7 +2972,7 @@
               !reservationResult.data ||
               reservationResult.data.length === 0
             ) {
-              showAlert("Data reservasi tidak ditemukan", "danger");
+              showErrorToast("Data reservasi tidak ditemukan");
               return;
             }
             latestReservation = reservationResult.data[0];
@@ -2976,7 +2981,7 @@
               `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/unpaid/${latestReservation.ID_Reservasi}`
             );
             if (!paymentResponse || !paymentResponse.ok) {
-              showAlert("Gagal memuat data pembayaran", "danger");
+              showErrorToast("Gagal memuat data pembayaran");
               return;
             }
             const paymentResult = await paymentResponse.json();
@@ -2987,18 +2992,12 @@
                 ? paymentResult.data.ID_Pembayaran
                 : null;
             if (!foundPaymentId) {
-              showAlert(
-                "ID Pembayaran tidak ditemukan atau tidak valid.",
-                "danger"
-              );
+              showErrorToast("ID Pembayaran tidak ditemukan atau tidak valid");
               return;
             }
           } catch (error) {
             console.error("Error finding payment ID:", error);
-            showAlert(
-              "Terjadi kesalahan saat mencari ID pembayaran.",
-              "danger"
-            );
+            showErrorToast("Terjadi kesalahan saat mencari ID pembayaran");
             return;
           }
 
@@ -3015,19 +3014,13 @@
           );
 
           if (!response) {
-            showAlert(
-              "Tidak ada respons dari server. Silakan coba lagi.",
-              "danger"
-            );
+            showErrorToast("Tidak ada respons dari server. Silakan coba lagi");
             return;
           }
 
           const result = await response.json();
           if (result.success) {
-            showAlert(
-              "Bukti pembayaran berhasil diupdate! Tim kami akan memverifikasi dalam 1x24 jam.",
-              "success"
-            );
+            showSuccessToast("Bukti pembayaran berhasil diupdate! Tim kami akan memverifikasi dalam 1x24 jam");
             loadReservationStatus(userEmail);
             const modal = bootstrap.Modal.getInstance(
               document.getElementById("paymentModal")
@@ -3040,13 +3033,10 @@
           } else {
             const errorMessage =
               result.message || "Gagal mengupdate bukti pembayaran";
-            showAlert(`Error: ${errorMessage}`, "danger");
+            showErrorToast(`Error: ${errorMessage}`);
           }
         } catch (error) {
-          showAlert(
-            "Terjadi kesalahan saat mengirim bukti pembayaran",
-            "danger"
-          );
+          showErrorToast("Terjadi kesalahan saat mengirim bukti pembayaran");
         } finally {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
@@ -3176,10 +3166,7 @@
           "application/pdf",
         ];
         if (!allowedTypes.includes(file.type)) {
-          showAlert(
-            "Format file tidak didukung. Gunakan JPG, PNG, atau PDF",
-            "danger"
-          );
+          showErrorToast("Format file tidak didukung. Gunakan JPG, PNG, atau PDF");
           // Reset file input and keep button disabled
           let validationFileInput = document.getElementById("buktiPembayaran");
           if (validationFileInput) validationFileInput.value = "";
@@ -3189,7 +3176,7 @@
         // Validate file size (5MB)
         const maxSize = 5 * 1024 * 1024;
         if (file.size > maxSize) {
-          showAlert("Ukuran file terlalu besar. Maksimal 5MB", "danger");
+          showErrorToast("Ukuran file terlalu besar. Maksimal 5MB");
           // Reset file input and keep button disabled
           let sizeValidationFileInput =
             document.getElementById("buktiPembayaran");
@@ -3375,34 +3362,35 @@
         try {
           const user = getLoggedInUser();
           if (!user) {
-            showAlert("Anda harus login terlebih dahulu", "danger");
+            showErrorToast("Anda harus login terlebih dahulu");
             return;
           }
 
           // Check if user has existing review
           await loadExistingReview();
 
-          const modal = new bootstrap.Modal(document.getElementById("reviewModal"));
+          const modal = new bootstrap.Modal(
+            document.getElementById("reviewModal")
+          );
           modal.show();
-          
+
           // Initialize star rating
           initializeStarRating();
-          
+
           // Initialize character counter
           const reviewTextarea = document.getElementById("reviewText");
           const charCount = document.getElementById("charCount");
-          
-          reviewTextarea.addEventListener("input", function() {
+
+          reviewTextarea.addEventListener("input", function () {
             charCount.textContent = this.value.length;
             validateReviewForm();
           });
 
           // Initialize form validation
           validateReviewForm();
-
         } catch (error) {
           console.error("Error opening review modal:", error);
-          showAlert("Gagal membuka form ulasan", "danger");
+          showErrorToast("Gagal membuka form ulasan");
         }
       }
 
@@ -3431,21 +3419,23 @@
         const myReviewDate = document.getElementById("myReviewDate");
 
         myReviewText.innerHTML = `<strong>Ulasan:</strong> "${review.reviewText}"`;
-        
+
         // Generate stars for existing review
-        let stars = '';
+        let stars = "";
         for (let i = 1; i <= 5; i++) {
           if (i <= review.rating) {
-            stars += '<i class="fas fa-star" style="color: #eec55b; margin-right: 2px;"></i>';
+            stars +=
+              '<i class="fas fa-star" style="color: #eec55b; margin-right: 2px;"></i>';
           } else {
-            stars += '<i class="far fa-star" style="color: #ddd; margin-right: 2px;"></i>';
+            stars +=
+              '<i class="far fa-star" style="color: #ddd; margin-right: 2px;"></i>';
           }
         }
         myReviewRating.innerHTML = `<strong>Rating:</strong> ${stars} (${review.rating}/5)`;
         myReviewDate.innerHTML = `<strong>Tanggal:</strong> ${review.formattedDate}`;
 
         existingReviewDiv.style.display = "block";
-        
+
         // Store review ID for editing
         window.currentReviewId = review.id;
       }
@@ -3453,10 +3443,10 @@
       function editMyReview() {
         // Hide existing review display and show form for editing
         document.getElementById("existingReview").style.display = "none";
-        
+
         // Pre-fill form with existing data if available
         // This would require loading the review data again or storing it
-        showAlert("Fitur edit ulasan akan segera tersedia", "info");
+        showInfoToast("Fitur edit ulasan akan segera tersedia");
       }
 
       function initializeStarRating() {
@@ -3465,10 +3455,10 @@
         const selectedRating = document.getElementById("selectedRating");
 
         stars.forEach((star, index) => {
-          star.addEventListener("click", function() {
+          star.addEventListener("click", function () {
             const rating = index + 1;
             selectedRating.value = rating;
-            
+
             // Update visual state
             stars.forEach((s, i) => {
               if (i < rating) {
@@ -3481,17 +3471,17 @@
             // Update text
             const ratingTexts = [
               "Sangat Buruk",
-              "Buruk", 
+              "Buruk",
               "Cukup",
               "Bagus",
-              "Sangat Bagus"
+              "Sangat Bagus",
             ];
             ratingText.textContent = `${rating}/5 - ${ratingTexts[rating - 1]}`;
-            
+
             validateReviewForm();
           });
 
-          star.addEventListener("mouseenter", function() {
+          star.addEventListener("mouseenter", function () {
             const rating = index + 1;
             stars.forEach((s, i) => {
               if (i < rating) {
@@ -3504,20 +3494,24 @@
         });
 
         // Reset on mouse leave
-        document.getElementById("starRating").addEventListener("mouseleave", function() {
-          const currentRating = parseInt(selectedRating.value);
-          stars.forEach((s, i) => {
-            if (i < currentRating) {
-              s.style.color = "#eec55b";
-            } else {
-              s.style.color = "#ddd";
-            }
+        document
+          .getElementById("starRating")
+          .addEventListener("mouseleave", function () {
+            const currentRating = parseInt(selectedRating.value);
+            stars.forEach((s, i) => {
+              if (i < currentRating) {
+                s.style.color = "#eec55b";
+              } else {
+                s.style.color = "#ddd";
+              }
+            });
           });
-        });
       }
 
       function validateReviewForm() {
-        const rating = parseInt(document.getElementById("selectedRating").value);
+        const rating = parseInt(
+          document.getElementById("selectedRating").value
+        );
         const reviewText = document.getElementById("reviewText").value.trim();
         const submitBtn = document.getElementById("submitReviewBtn");
 
@@ -3533,80 +3527,97 @@
       }
 
       // Handle review form submission
-      document.getElementById("reviewForm").addEventListener("submit", async function(e) {
-        e.preventDefault();
-        
-        const rating = parseInt(document.getElementById("selectedRating").value);
-        const reviewText = document.getElementById("reviewText").value.trim();
-        const submitBtn = document.getElementById("submitReviewBtn");
+      document
+        .getElementById("reviewForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-        if (rating === 0) {
-          showAlert("Silakan pilih rating terlebih dahulu", "warning");
-          return;
-        }
-
-        if (reviewText.length < 10) {
-          showAlert("Ulasan minimal 10 karakter", "warning");
-          return;
-        }
-
-        // Show loading state
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Mengirim...';
-
-        try {
-          const response = await authFetch(
-            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/ulasan",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                rating: rating,
-                ulasan: reviewText
-              })
-            }
+          const rating = parseInt(
+            document.getElementById("selectedRating").value
           );
+          const reviewText = document.getElementById("reviewText").value.trim();
+          const submitBtn = document.getElementById("submitReviewBtn");
 
-          const result = await response.json();
-
-          if (result.success) {
-            showAlert("Ulasan berhasil ditambahkan! Terima kasih atas feedback Anda.", "success");
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById("reviewModal"));
-            modal.hide();
-            
-            // Reset form
-            document.getElementById("reviewForm").reset();
-            document.getElementById("selectedRating").value = "0";
-            document.getElementById("charCount").textContent = "0";
-            document.getElementById("ratingText").textContent = "Pilih rating";
-            
-            // Reset stars
-            document.querySelectorAll("#starRating i").forEach(star => {
-              star.classList.remove("active");
-              star.style.color = "#ddd";
-            });
-
-          } else {
-            if (result.message === "Anda sudah memberikan ulasan sebelumnya") {
-              showAlert("Anda sudah pernah memberikan ulasan sebelumnya", "warning");
-            } else {
-              showAlert(result.message || "Gagal mengirim ulasan", "danger");
-            }
+          if (rating === 0) {
+            showWarningToast("Silakan pilih rating terlebih dahulu");
+            return;
           }
 
-        } catch (error) {
-          console.error("Error submitting review:", error);
-          showAlert("Terjadi kesalahan saat mengirim ulasan", "danger");
-        } finally {
-          // Reset button
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Kirim Ulasan';
-        }
-      });
+          if (reviewText.length < 10) {
+            showWarningToast("Ulasan minimal 10 karakter");
+            return;
+          }
+
+          // Show loading state
+          submitBtn.disabled = true;
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-2"></i>Mengirim...';
+
+          try {
+            const response = await authFetch(
+              "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/ulasan",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  rating: rating,
+                  ulasan: reviewText,
+                }),
+              }
+            );
+
+            if (!response) {
+              throw new Error("Tidak ada respons dari server");
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+              showSuccessToast(
+                "Ulasan berhasil ditambahkan! Terima kasih atas feedback Anda."
+              );
+
+              // Close modal
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("reviewModal")
+              );
+              modal.hide();
+
+              // Reset form
+              document.getElementById("reviewForm").reset();
+              document.getElementById("selectedRating").value = "0";
+              document.getElementById("charCount").textContent = "0";
+              document.getElementById("ratingText").textContent =
+                "Pilih rating";
+
+              // Reset stars
+              document.querySelectorAll("#starRating i").forEach((star) => {
+                star.classList.remove("active");
+                star.style.color = "#ddd";
+              });
+            } else {
+              if (
+                result.message === "Anda sudah memberikan ulasan sebelumnya"
+              ) {
+                showWarningToast(
+                  "Anda sudah pernah memberikan ulasan sebelumnya"
+                );
+              } else {
+                showErrorToast(result.message || "Gagal mengirim ulasan");
+              }
+            }
+          } catch (error) {
+            console.error("Error submitting review:", error);
+            showErrorToast("Terjadi kesalahan saat mengirim ulasan: " + error.message);
+          } finally {
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML =
+              '<i class="fas fa-paper-plane me-2"></i>Kirim Ulasan';
+          }
+        });
     </script>
 
     <!-- Confirmation Modal -->
