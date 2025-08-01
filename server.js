@@ -124,6 +124,59 @@ app.get("/riwayat-pembayaran", (req, res) => {
   res.sendFile(path.join(__dirname, "pages", "riwayat-pembayaran.html"));
 });
 
+// Routes with .html extension for direct HTML access
+app.get("/home.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "home.html"));
+});
+
+app.get("/login.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "login.html"));
+});
+
+app.get("/register.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "register.html"));
+});
+
+app.get("/kamar.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "kamar.html"));
+});
+
+app.get("/reservasi.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "reservasi.html"));
+});
+
+app.get("/akun.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "akun.html"));
+});
+
+app.get("/admin-dashboard.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-dashboard.html"));
+});
+
+app.get("/admin-pembayaran.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-pembayaran.html"));
+});
+
+app.get("/admin-reservasi.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-reservasi.html"));
+});
+
+app.get("/admin-pending-reservasi.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-pending-reservasi.html"));
+});
+
+app.get("/data-kamar-admin.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "data-kamar-admin.html"));
+});
+
+app.get("/user-admin.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "user-admin.html"));
+});
+
+app.get("/riwayat-pembayaran.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "riwayat-pembayaran.html"));
+});
+
 // 404 handler
 app.use("*", (req, res) => {
   res.status(404).json({
