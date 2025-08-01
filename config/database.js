@@ -17,7 +17,7 @@ if (process.env.JAWSDB_URL) {
     queueLimit: 0,
     acquireTimeout: 60000,
     timeout: 60000,
-    reconnect: true
+    reconnect: true,
   };
 } else {
   // Local development configuration
@@ -41,7 +41,9 @@ async function testConnection() {
   try {
     const connection = await pool.getConnection();
     console.log("✅ Database connected successfully");
-    console.log(`📍 Connected to: ${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`);
+    console.log(
+      `📍 Connected to: ${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`
+    );
     console.log(`👤 User: ${dbConfig.user}`);
     connection.release();
   } catch (error) {
@@ -50,7 +52,7 @@ async function testConnection() {
       host: dbConfig.host,
       port: dbConfig.port,
       database: dbConfig.database,
-      user: dbConfig.user
+      user: dbConfig.user,
     });
   }
 }

@@ -3,6 +3,9 @@ const router = express.Router();
 const UserController = require("../controllers/UserController");
 const { authenticateToken, requireAdmin } = require("../middleware/auth");
 
+// User routes (protected)
+router.delete("/me", authenticateToken, UserController.deleteMyAccount);
+
 // Admin routes (protected + admin only)
 router.get("/", authenticateToken, requireAdmin, UserController.getAllUsers);
 router.get("/:email", authenticateToken, requireAdmin, UserController.getUserByEmail);

@@ -254,6 +254,35 @@ class Reservasi {
       throw error;
     }
   }
+
+  // Get reservation by ID
+  static async getById(id) {
+    try {
+      const query = "SELECT * FROM reservasi WHERE ID_Reservasi = ?";
+      const [rows] = await pool.execute(query, [id]);
+      return rows[0] || null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete reservation by ID
+  static async delete(id) {
+    try {
+      const query = "DELETE FROM reservasi WHERE ID_Reservasi = ?";
+      const [result] = await pool.execute(query, [id]);
+
+      return {
+        success: result.affectedRows > 0,
+        message:
+          result.affectedRows > 0
+            ? "Reservation deleted successfully"
+            : "Reservation not found",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = Reservasi;

@@ -38,5 +38,11 @@ router.put(
   requireAdmin,
   ReservasiController.updateStatus
 );
+router.delete(
+  "/:id",
+  authenticateToken,
+  requireAdmin,
+  ReservasiController.deleteReservasi
+);
 
 module.exports = router;

@@ -19,6 +19,49 @@ class UserController {
     }
   }
 
+  // Delete user's own account (User)
+  static async deleteMyAccount(req, res) {
+    try {
+      const { email } = req.user;
+      
+      // Check if user has active reservations
+      const Reservasi = require("../models/Reservasi");
+      const userReservations = await Reservasi.getByUser(email);
+      
+      const activeReservations = userReservations.filter(
+        reservation => reservation.Status === "Diterima"
+      );
+      
+      if (activeReservations.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot delete account. You have active reservations. Please contact admin to resolve your reservations first."
+        });
+      }
+
+      // Delete user account
+      const result = await User.deleteUser(email);
+
+      if (result.success) {
+        res.json({
+          success: true,
+          message: "Account deleted successfully"
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: "User not found"
+        });
+      }
+    } catch (error) {
+      console.error("Delete my account error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
+
   // Get user by email (Admin only)
   static async getUserByEmail(req, res) {
     try {

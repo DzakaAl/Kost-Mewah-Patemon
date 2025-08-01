@@ -32,6 +32,7 @@ app.use("/api/tmp-users", require("./routes/tmp-users"));
 app.use("/api/pending-reservasi", require("./routes/pending-reservasi"));
 app.use("/api/payments", require("./routes/payments")); // Unified payment system
 app.use("/api/scheduler", require("./routes/scheduler-control")); // Scheduler control
+app.use("/api/ulasan", require("./routes/ulasan")); // Review system
 
 // Serve uploaded files (bukti pembayaran)
 app.use("/uploads", express.static("uploads"));
@@ -51,22 +52,31 @@ app.get("/", (req, res) => {
 app.get("/api", (req, res) => {
   res.json({
     message: "Welcome to Kost Patemon API - Enhanced Payment System",
-    version: "2.0.0",
+    version: "2.1.0",
     endpoints: {
       auth: "/api/auth",
       reservasi: "/api/reservasi",
       kamar: "/api/kamar",
       tmpUsers: "/api/tmp-users",
       pendingReservasi: "/api/pending-reservasi",
-      payments: "/api/payment/payments",
-      paymentHistory: "/api/payment/my-payments",
-      paymentProof: "/api/payment/{paymentId}/proof",
+      payments: "/api/payments",
+      users: "/api/users",
+      ulasan: "/api/ulasan",
+    },
+    newEndpoints: {
+      deleteReservation: "DELETE /api/reservasi/:id (Admin only)",
+      deleteUserAccount: "DELETE /api/users/me (User)",
+      updateReservationStatus: "PUT /api/reservasi/:id/status (Admin only - supports 'Keluar' status)",
+      reviewSystem: "GET/POST/PUT/DELETE /api/ulasan (Full review CRUD)",
     },
     features: {
       autoStatusUpdate: "Daily payment status automation",
       paymentTracking: "Monthly payment history",
       adminDashboard: "Real-time statistics",
       unifiedPaymentAPI: "Single payment management system",
+      roomAvailabilityUpdate: "Auto-update room status when reservation ends",
+      reviewSystem: "User review and rating system",
+      accountDeletion: "Safe account deletion with reservation check",
     },
   });
 });
