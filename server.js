@@ -7,7 +7,6 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Create upload directories if they don't exist
 const uploadDirs = ["uploads", "uploads/profiles", "uploads/bukti_pembayaran"];
