@@ -54,11 +54,11 @@ class Ulasan {
   static async create(data) {
     try {
       const { email, rating, ulasan } = data;
-      
+
       // Check if user already has a review
       const existingQuery = "SELECT Email FROM ulasan WHERE Email = ?";
       const [existing] = await pool.execute(existingQuery, [email]);
-      
+
       if (existing.length > 0) {
         throw new Error("Anda sudah memberikan ulasan sebelumnya");
       }
@@ -68,13 +68,13 @@ class Ulasan {
         VALUES (?, ?, ?, 1, CURDATE())
       `;
       const [result] = await pool.execute(query, [email, rating, ulasan]);
-      
+
       return {
         Email: email,
         Rating: rating,
         Ulasan: ulasan,
         No_Kamar: 1,
-        Tanggal: new Date()
+        Tanggal: new Date(),
       };
     } catch (error) {
       console.error("Error creating ulasan:", error);
@@ -92,11 +92,11 @@ class Ulasan {
         WHERE Email = ?
       `;
       const [result] = await pool.execute(query, [rating, ulasan, email]);
-      
+
       if (result.affectedRows === 0) {
         throw new Error("Ulasan tidak ditemukan");
       }
-      
+
       return result;
     } catch (error) {
       console.error("Error updating ulasan:", error);
@@ -109,11 +109,11 @@ class Ulasan {
     try {
       const query = "DELETE FROM ulasan WHERE Email = ?";
       const [result] = await pool.execute(query, [email]);
-      
+
       if (result.affectedRows === 0) {
         throw new Error("Ulasan tidak ditemukan");
       }
-      
+
       return result;
     } catch (error) {
       console.error("Error deleting ulasan:", error);

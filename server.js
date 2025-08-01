@@ -66,7 +66,8 @@ app.get("/api", (req, res) => {
     newEndpoints: {
       deleteReservation: "DELETE /api/reservasi/:id (Admin only)",
       deleteUserAccount: "DELETE /api/users/me (User)",
-      updateReservationStatus: "PUT /api/reservasi/:id/status (Admin only - supports 'Keluar' status)",
+      updateReservationStatus:
+        "PUT /api/reservasi/:id/status (Admin only - supports 'Keluar' status)",
       reviewSystem: "GET/POST/PUT/DELETE /api/ulasan (Full review CRUD)",
     },
     features: {

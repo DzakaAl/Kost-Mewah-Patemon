@@ -153,7 +153,7 @@ class ReservasiController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          message: "Reservation not found"
+          message: "Reservation not found",
         });
       }
 
@@ -167,13 +167,15 @@ class ReservasiController {
       if (status === "Keluar") {
         const Kamar = require("../models/Kamar");
         await Kamar.updateAvailability(reservation.No_Kamar, 1);
-        console.log(`Room ${reservation.No_Kamar} availability updated to available due to checkout`);
+        console.log(
+          `Room ${reservation.No_Kamar} availability updated to available due to checkout`
+        );
       }
 
       res.json({
         success: true,
         message: "Reservation status updated successfully",
-        data: result
+        data: result,
       });
     } catch (error) {
       console.error("Update reservation status error:", error);
@@ -194,7 +196,7 @@ class ReservasiController {
       if (!reservation) {
         return res.status(404).json({
           success: false,
-          message: "Reservation not found"
+          message: "Reservation not found",
         });
       }
 
@@ -207,11 +209,13 @@ class ReservasiController {
       // Update room availability to available (1) when reservation is deleted
       const Kamar = require("../models/Kamar");
       await Kamar.updateAvailability(reservation.No_Kamar, 1);
-      console.log(`Room ${reservation.No_Kamar} availability updated to available due to reservation deletion`);
+      console.log(
+        `Room ${reservation.No_Kamar} availability updated to available due to reservation deletion`
+      );
 
       res.json({
         success: true,
-        message: "Reservation deleted successfully and room made available"
+        message: "Reservation deleted successfully and room made available",
       });
     } catch (error) {
       console.error("Delete reservation error:", error);

@@ -1017,7 +1017,9 @@
         toast.innerHTML = `
           <div style="display: flex; align-items: center; gap: 10px;">
             <i class="bi ${
-              type === "success" ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill"
+              type === "success"
+                ? "bi-check-circle-fill"
+                : "bi-exclamation-triangle-fill"
             }"></i>
             <span>${message}</span>
             <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; margin-left: auto; cursor: pointer;">
@@ -1542,7 +1544,11 @@
         // Show confirmation modal with reservation details
         showConfirmModal(
           "Konfirmasi Hapus Reservasi",
-          `Apakah Anda yakin ingin menghapus reservasi atas nama "${reservasi.Nama || 'N/A'}" di kamar "${reservasi.Nama_Kamar || reservasi.No_Kamar || 'N/A'}"?\n\nTindakan ini tidak dapat dibatalkan!`,
+          `Apakah Anda yakin ingin menghapus reservasi atas nama "${
+            reservasi.Nama || "N/A"
+          }" di kamar "${
+            reservasi.Nama_Kamar || reservasi.No_Kamar || "N/A"
+          }"?\n\nTindakan ini tidak dapat dibatalkan!`,
           async function () {
             try {
               const token = localStorage.getItem("token");
@@ -1566,13 +1572,17 @@
                   // Reload data to reflect changes
                   loadReservasiData();
                 } else {
-                  throw new Error(result.message || "Gagal menghapus reservasi");
+                  throw new Error(
+                    result.message || "Gagal menghapus reservasi"
+                  );
                 }
               } else {
                 if (response.status === 404) {
                   throw new Error("Reservasi tidak ditemukan");
                 } else if (response.status === 403) {
-                  throw new Error("Anda tidak memiliki akses untuk menghapus reservasi ini");
+                  throw new Error(
+                    "Anda tidak memiliki akses untuk menghapus reservasi ini"
+                  );
                 } else {
                   throw new Error("Terjadi kesalahan server");
                 }
@@ -1603,7 +1613,13 @@
       }
 
       // Confirmation Modal Functions
-      function showConfirmModal(title, message, onConfirm, onCancel = null, confirmButtonType = "primary") {
+      function showConfirmModal(
+        title,
+        message,
+        onConfirm,
+        onCancel = null,
+        confirmButtonType = "primary"
+      ) {
         const modal = document.getElementById("confirmModal");
         const titleElement = document.getElementById("confirmModalTitle");
         const messageElement = document.getElementById("confirmModalMessage");
@@ -1612,12 +1628,15 @@
 
         // Set modal content
         titleElement.textContent = title;
-        
+
         // Handle multiline messages
-        if (message.includes('\n')) {
-          messageElement.innerHTML = message.split('\n').map(line => 
-            line.trim() ? `<p style="margin: 0 0 10px 0;">${line}</p>` : ''
-          ).join('');
+        if (message.includes("\n")) {
+          messageElement.innerHTML = message
+            .split("\n")
+            .map((line) =>
+              line.trim() ? `<p style="margin: 0 0 10px 0;">${line}</p>` : ""
+            )
+            .join("");
         } else {
           messageElement.textContent = message;
         }

@@ -12,7 +12,7 @@ const ulasanValidation = [
   body("ulasan")
     .isLength({ min: 10, max: 500 })
     .withMessage("Ulasan harus antara 10-500 karakter")
-    .trim()
+    .trim(),
 ];
 
 // Public routes
@@ -21,8 +21,18 @@ router.get("/stats", UlasanController.getUlasanStats);
 
 // Protected routes - require authentication
 router.get("/my-reviews", authenticateToken, UlasanController.getUlasanByUser);
-router.post("/", authenticateToken, ulasanValidation, UlasanController.createUlasan);
-router.put("/", authenticateToken, ulasanValidation, UlasanController.updateUlasan);
+router.post(
+  "/",
+  authenticateToken,
+  ulasanValidation,
+  UlasanController.createUlasan
+);
+router.put(
+  "/",
+  authenticateToken,
+  ulasanValidation,
+  UlasanController.updateUlasan
+);
 router.delete("/", authenticateToken, UlasanController.deleteUlasan);
 
 module.exports = router;

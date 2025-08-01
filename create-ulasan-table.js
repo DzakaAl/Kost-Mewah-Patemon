@@ -3,11 +3,11 @@ require("dotenv").config();
 
 async function createUlasanTable() {
   let connection;
-  
+
   try {
     // Parse Heroku JawsDB URL
     const url = new URL(process.env.JAWSDB_URL);
-    
+
     const dbConfig = {
       host: url.hostname,
       user: url.username,
@@ -15,11 +15,11 @@ async function createUlasanTable() {
       database: url.pathname.slice(1), // Remove leading slash
       port: url.port || 3306,
     };
-    
+
     console.log("🔗 Connecting to production database...");
     connection = await mysql.createConnection(dbConfig);
     console.log("✅ Connected to production database");
-    
+
     // Create ulasan table
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS ulasan (
@@ -35,26 +35,29 @@ async function createUlasanTable() {
         CONSTRAINT fk_ulasan_user FOREIGN KEY (Email) REFERENCES user (Email)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
     `;
-    
+
     console.log("📋 Creating ulasan table...");
     await connection.execute(createTableQuery);
     console.log("✅ Ulasan table created successfully");
-    
+
     // Verify table exists
     const [tables] = await connection.execute("SHOW TABLES LIKE 'ulasan'");
     if (tables.length > 0) {
       console.log("✅ Table verification: ulasan table exists");
-      
+
       // Show table structure
       const [columns] = await connection.execute("DESCRIBE ulasan");
       console.log("📊 Table structure:");
-      columns.forEach(col => {
-        console.log(`  - ${col.Field}: ${col.Type} ${col.Null === 'NO' ? 'NOT NULL' : 'NULL'}`);
+      columns.forEach((col) => {
+        console.log(
+          `  - ${col.Field}: ${col.Type} ${
+            col.Null === "NO" ? "NOT NULL" : "NULL"
+          }`
+        );
       });
     } else {
       console.log("❌ Table verification failed");
     }
-    
   } catch (error) {
     console.error("❌ Error:", error.message);
     process.exit(1);

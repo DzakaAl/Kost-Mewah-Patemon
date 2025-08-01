@@ -23,19 +23,20 @@ class UserController {
   static async deleteMyAccount(req, res) {
     try {
       const { email } = req.user;
-      
+
       // Check if user has active reservations
       const Reservasi = require("../models/Reservasi");
       const userReservations = await Reservasi.getByUser(email);
-      
+
       const activeReservations = userReservations.filter(
-        reservation => reservation.Status === "Diterima"
+        (reservation) => reservation.Status === "Diterima"
       );
-      
+
       if (activeReservations.length > 0) {
         return res.status(400).json({
           success: false,
-          message: "Cannot delete account. You have active reservations. Please contact admin to resolve your reservations first."
+          message:
+            "Cannot delete account. You have active reservations. Please contact admin to resolve your reservations first.",
         });
       }
 
@@ -45,12 +46,12 @@ class UserController {
       if (result.success) {
         res.json({
           success: true,
-          message: "Account deleted successfully"
+          message: "Account deleted successfully",
         });
       } else {
         res.status(404).json({
           success: false,
-          message: "User not found"
+          message: "User not found",
         });
       }
     } catch (error) {

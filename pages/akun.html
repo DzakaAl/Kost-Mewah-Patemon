@@ -3020,7 +3020,9 @@
 
           const result = await response.json();
           if (result.success) {
-            showSuccessToast("Bukti pembayaran berhasil diupdate! Tim kami akan memverifikasi dalam 1x24 jam");
+            showSuccessToast(
+              "Bukti pembayaran berhasil diupdate! Tim kami akan memverifikasi dalam 1x24 jam"
+            );
             loadReservationStatus(userEmail);
             const modal = bootstrap.Modal.getInstance(
               document.getElementById("paymentModal")
@@ -3166,7 +3168,9 @@
           "application/pdf",
         ];
         if (!allowedTypes.includes(file.type)) {
-          showErrorToast("Format file tidak didukung. Gunakan JPG, PNG, atau PDF");
+          showErrorToast(
+            "Format file tidak didukung. Gunakan JPG, PNG, atau PDF"
+          );
           // Reset file input and keep button disabled
           let validationFileInput = document.getElementById("buktiPembayaran");
           if (validationFileInput) validationFileInput.value = "";
@@ -3532,11 +3536,23 @@
         .addEventListener("submit", async function (e) {
           e.preventDefault();
 
+          console.log("Review form submitted");
+
+          // Check if user is logged in
+          if (!isUserLoggedIn()) {
+            showErrorToast(
+              "Anda harus login terlebih dahulu untuk memberikan ulasan"
+            );
+            return;
+          }
+
           const rating = parseInt(
             document.getElementById("selectedRating").value
           );
           const reviewText = document.getElementById("reviewText").value.trim();
           const submitBtn = document.getElementById("submitReviewBtn");
+
+          console.log("Form data:", { rating, reviewText });
 
           if (rating === 0) {
             showWarningToast("Silakan pilih rating terlebih dahulu");
@@ -3554,6 +3570,9 @@
             '<i class="fas fa-spinner fa-spin me-2"></i>Mengirim...';
 
           try {
+            console.log("Submitting review with data:", { rating, reviewText });
+            console.log("User token:", localStorage.getItem("token"));
+
             const response = await authFetch(
               "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/ulasan",
               {
@@ -3568,11 +3587,15 @@
               }
             );
 
+            console.log("Response received:", response);
+
             if (!response) {
+              console.error("No response received from server");
               throw new Error("Tidak ada respons dari server");
             }
 
             const result = await response.json();
+            console.log("Response data:", result);
 
             if (result.success) {
               showSuccessToast(
@@ -3610,7 +3633,9 @@
             }
           } catch (error) {
             console.error("Error submitting review:", error);
-            showErrorToast("Terjadi kesalahan saat mengirim ulasan: " + error.message);
+            showErrorToast(
+              "Terjadi kesalahan saat mengirim ulasan: " + error.message
+            );
           } finally {
             // Reset button
             submitBtn.disabled = false;
