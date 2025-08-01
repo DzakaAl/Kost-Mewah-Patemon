@@ -50,6 +50,17 @@ class User {
     }
   }
 
+  // Get all users (Admin only)
+  static async getAllUsers() {
+    try {
+      const query = "SELECT Nama, Email, No_telp, Alamat, Role, Foto FROM user ORDER BY Nama";
+      const [rows] = await pool.execute(query);
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Verify password
   static async verifyPassword(plainPassword, hashedPassword) {
     return await bcrypt.compare(plainPassword, hashedPassword);
@@ -474,6 +485,139 @@ class User {
       };
     } catch (error) {
       throw error;
+    }
+  }
+
+  // Create new user by admin
+  static async createByAdmin(userData) {
+    const { Nama, Email, Password, No_telp, Alamat, Role = "penyewa" } = userData;
+
+    try {
+      // Hash password
+      const hashedPassword = await bcrypt.hash(Password, 10);
+
+      const query = `
+        INSERT INTO user (Nama, No_telp, Alamat, Email, Password, Role) 
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+
+      const [result] = await pool.execute(query, [
+        Nama,
+        No_telp,
+        Alamat,
+        Email,
+        hashedPassword,
+        Role,
+      ]);
+
+      return {
+        success: true,
+        message: "User created successfully",
+        userId: result.insertId,
+        data: {
+          Nama,
+          Email,
+          No_telp,
+          Alamat,
+          Role,
+        },
+      };
+    } catch (error) {
+      if (error.code === "ER_DUP_ENTRY") {
+        return {
+          success: false,
+          message: "Email already exists",
+        };
+      }
+      return {
+        success: false,
+        message: "Failed to create user: " + error.message,
+      };
+    }
+  }
+
+  // Update user data
+  static async updateUser(email, userData) {
+    try {
+      const { Nama, No_telp, Alamat, Role } = userData;
+
+      const query = `
+        UPDATE user 
+        SET Nama = ?, No_telp = ?, Alamat = ?, Role = ?
+        WHERE Email = ?
+      `;
+
+      const [result] = await pool.execute(query, [
+        Nama,
+        No_telp,
+        Alamat,
+        Role,
+        email,
+      ]);
+
+      if (result.affectedRows === 0) {
+        return {
+          success: false,
+          message: "User not found",
+        };
+      }
+
+      return {
+        success: true,
+        message: "User updated successfully",
+        data: {
+          Nama,
+          Email: email,
+          No_telp,
+          Alamat,
+          Role,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to update user: " + error.message,
+      };
+    }
+  }
+
+  // Delete user
+  static async deleteUser(email) {
+    try {
+      // Check if user has active reservations
+      const checkQuery = `
+        SELECT COUNT(*) as count 
+        FROM reservasi 
+        WHERE Email = ? AND Status IN ('Telat/Belum Bayar', 'Aktif/Lunas')
+      `;
+      const [checkResult] = await pool.execute(checkQuery, [email]);
+
+      if (checkResult[0].count > 0) {
+        return {
+          success: false,
+          message: "Cannot delete user with active reservations",
+        };
+      }
+
+      const query = "DELETE FROM user WHERE Email = ?";
+      const [result] = await pool.execute(query, [email]);
+
+      if (result.affectedRows === 0) {
+        return {
+          success: false,
+          message: "User not found",
+        };
+      }
+
+      return {
+        success: true,
+        message: "User deleted successfully",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Failed to delete user: " + error.message,
+      };
     }
   }
 }

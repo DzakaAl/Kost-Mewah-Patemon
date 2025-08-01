@@ -92,6 +92,92 @@ class KamarController {
       });
     }
   }
+
+  // Create new room (Admin only)
+  static async create(req, res) {
+    try {
+      const { Nama_Kamar, Letak, Ketersediaan } = req.body;
+
+      if (!Nama_Kamar || !Letak) {
+        return res.status(400).json({
+          success: false,
+          message: "Nama kamar dan letak harus diisi",
+        });
+      }
+
+      const result = await Kamar.create({
+        Nama_Kamar,
+        Letak,
+        Ketersediaan: Ketersediaan !== undefined ? parseInt(Ketersediaan) : 1,
+      });
+
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+
+      res.status(201).json(result);
+    } catch (error) {
+      console.error("Create room error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
+
+  // Update room (Admin only)
+  static async update(req, res) {
+    try {
+      const { id } = req.params;
+      const { Nama_Kamar, Letak, Ketersediaan } = req.body;
+
+      if (!Nama_Kamar || !Letak) {
+        return res.status(400).json({
+          success: false,
+          message: "Nama kamar dan letak harus diisi",
+        });
+      }
+
+      const result = await Kamar.update(id, {
+        Nama_Kamar,
+        Letak,
+        Ketersediaan: parseInt(Ketersediaan),
+      });
+
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error("Update room error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
+
+  // Delete room (Admin only)
+  static async delete(req, res) {
+    try {
+      const { id } = req.params;
+
+      const result = await Kamar.delete(id);
+
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+
+      res.json(result);
+    } catch (error) {
+      console.error("Delete room error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
 }
 
 module.exports = KamarController;

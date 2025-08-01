@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/reservasi", require("./routes/reservasi"));
 app.use("/api/kamar", require("./routes/kamar"));
+app.use("/api/users", require("./routes/users"));
 app.use("/api/tmp-users", require("./routes/tmp-users"));
 app.use("/api/pending-reservasi", require("./routes/pending-reservasi"));
 app.use("/api/payments", require("./routes/payments")); // Unified payment system

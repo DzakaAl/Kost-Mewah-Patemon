@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard - Kost Mewah Patemon Gombong</title>
+    <title>Admin User - Kost Mewah Patemon Gombong</title>
+    <link rel="icon" href="../image/logo.png" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -890,30 +891,50 @@
 
       // Load user data from server
       async function loadUserData() {
+        console.log('Loading user data...');
         showLoading();
 
         try {
           const token = localStorage.getItem("token");
-          const response = await fetch("http://localhost:3000/api/auth/admin/users", {
+          console.log('Token:', token ? 'Present' : 'Missing');
+          
+          if (!token) {
+            console.error('No token found');
+            hideLoading();
+            currentUsers = [];
+            displayUserData(currentUsers);
+            return;
+          }
+
+          const response = await fetch("http://localhost:3000/api/users", {
             headers: {
               "Authorization": `Bearer ${token}`,
               "Content-Type": "application/json"
             }
           });
 
+          console.log('Response status:', response.status);
+          console.log('Response ok:', response.ok);
+
           if (response.ok) {
             const result = await response.json();
+            console.log('API Response:', result);
             if (result.success) {
               currentUsers = result.data;
+              console.log('Users loaded:', currentUsers.length);
               hideLoading();
               displayUserData(currentUsers);
             } else {
+              console.error('API returned error:', result.message);
               throw new Error(result.message || "Failed to load data");
             }
           } else {
+            const errorText = await response.text();
+            console.error('HTTP Error:', response.status, errorText);
             throw new Error("Server error");
           }
         } catch (error) {
+          console.error('Load user data error:', error);
           hideLoading();
           // Show empty state or error message
           currentUsers = [];
@@ -923,15 +944,18 @@
 
       // Display user data in table
       function displayUserData(users) {
+        console.log('Displaying user data:', users);
         const tbody = document.getElementById("userTableBody");
         const emptyState = document.getElementById("emptyState");
 
         if (users.length === 0) {
+          console.log('No users to display, showing empty state');
           tbody.innerHTML = "";
           emptyState.style.display = "block";
           return;
         }
 
+        console.log('Displaying', users.length, 'users');
         emptyState.style.display = "none";
 
         tbody.innerHTML = users
@@ -1007,23 +1031,71 @@
       }
 
       // Edit user function
-      function editUser(userEmail) {
-        const user = currentUsers.find(u => u.Email === userEmail);
-        if (user) {
-          // Implement edit functionality here
-          alert(`Edit user: ${user.Nama}\nFitur edit akan segera tersedia`);
+      async function editUser(userEmail) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`http://localhost:3000/api/users/${encodeURIComponent(userEmail)}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+              const user = result.data;
+              
+              // Populate edit form
+              document.getElementById('editEmailUser').value = user.Email;
+              document.getElementById('editNamaUser').value = user.Nama;
+              document.getElementById('editNoTelpUser').value = user.No_telp;
+              document.getElementById('editAlamatUser').value = user.Alamat;
+              document.getElementById('editRoleUser').value = user.Role;
+              
+              // Show edit modal
+              const modal = new bootstrap.Modal(document.getElementById('editAkunModal'));
+              modal.show();
+            } else {
+              showErrorToast('Gagal memuat data user');
+            }
+          } else {
+            showErrorToast('Gagal memuat data user');
+          }
+        } catch (error) {
+          showErrorToast('Terjadi kesalahan: ' + error.message);
         }
       }
 
       // Delete user function
-      function deleteUser(userEmail) {
+      async function deleteUser(userEmail) {
         const user = currentUsers.find(u => u.Email === userEmail);
         if (user) {
-          const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus user: ${user.Nama}?`);
-          if (confirmDelete) {
-            // Implement delete functionality here
-            alert(`Delete user: ${user.Nama}\nFitur hapus akan segera tersedia`);
-          }
+          showConfirmModal(
+            'Konfirmasi Hapus Akun',
+            `Apakah Anda yakin ingin menghapus akun "${user.Nama}"? Tindakan ini tidak dapat dibatalkan.`,
+            async function() {
+              try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`http://localhost:3000/api/users/${encodeURIComponent(userEmail)}`, {
+                  method: 'DELETE',
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                  showSuccessToast('Akun berhasil dihapus!');
+                  loadUserData(); // Reload data
+                } else {
+                  showErrorToast('Gagal menghapus akun: ' + result.message);
+                }
+              } catch (error) {
+                showErrorToast('Terjadi kesalahan: ' + error.message);
+              }
+            }
+          );
         }
       }
 
@@ -1050,24 +1122,95 @@
         const addAccountBtn = document.querySelector(".btn-add-account");
         if (addAccountBtn) {
           addAccountBtn.addEventListener("click", function (e) {
-            // Create ripple effect
-            const ripple = document.createElement("span");
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
+            // Open the modal for adding new user
+            const modal = new bootstrap.Modal(document.getElementById('tambahAkunModal'));
+            modal.show();
+          });
+        }
 
-            ripple.style.width = ripple.style.height = size + "px";
-            ripple.style.left = x + "px";
-            ripple.style.top = y + "px";
-            ripple.classList.add("ripple-effect");
+        // Handle tambah akun form submission
+        const tambahAkunForm = document.getElementById('tambahAkunForm');
+        if (tambahAkunForm) {
+          tambahAkunForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const userData = {
+              Nama: formData.get('Nama'),
+              Email: formData.get('Email'),
+              Password: formData.get('Password'),
+              No_telp: formData.get('No_telp'),
+              Alamat: formData.get('Alamat'),
+              Role: formData.get('Role')
+            };
+            
+            try {
+              const token = localStorage.getItem('token');
+              const response = await fetch('http://localhost:3000/api/users', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                showSuccessToast('Akun berhasil ditambahkan!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('tambahAkunModal'));
+                modal.hide();
+                this.reset();
+                loadUserData(); // Reload data
+              } else {
+                showErrorToast('Gagal menambahkan akun: ' + result.message);
+              }
+            } catch (error) {
+              showErrorToast('Terjadi kesalahan: ' + error.message);
+            }
+          });
+        }
 
-            this.appendChild(ripple);
-
-            setTimeout(() => {
-              ripple.remove();
-            }, 600);
-            alert("Fitur tambah akun akan segera tersedia");
+        // Handle edit akun form submission
+        const editAkunForm = document.getElementById('editAkunForm');
+        if (editAkunForm) {
+          editAkunForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const email = formData.get('Email');
+            const userData = {
+              Nama: formData.get('Nama'),
+              No_telp: formData.get('No_telp'),
+              Alamat: formData.get('Alamat'),
+              Role: formData.get('Role')
+            };
+            
+            try {
+              const token = localStorage.getItem('token');
+              const response = await fetch(`http://localhost:3000/api/users/${encodeURIComponent(email)}`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                showSuccessToast('Akun berhasil diupdate!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editAkunModal'));
+                modal.hide();
+                loadUserData(); // Reload data
+              } else {
+                showErrorToast('Gagal mengupdate akun: ' + result.message);
+              }
+            } catch (error) {
+              showErrorToast('Terjadi kesalahan: ' + error.message);
+            }
           });
         }
       }
@@ -1130,6 +1273,78 @@
         });
       }
 
+      // Toast Message Functions
+      function showToast(message, type = 'success', duration = 4000) {
+        // Remove existing toast if any
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) {
+          existingToast.remove();
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: ${type === 'success' ? 'linear-gradient(135deg, #27ae60, #2ecc71)' : 
+                       type === 'error' ? 'linear-gradient(135deg, #e74c3c, #c0392b)' : 
+                       'linear-gradient(135deg, #3498db, #2980b9)'};
+          color: white;
+          padding: 15px 20px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          z-index: 10000;
+          font-weight: 600;
+          min-width: 300px;
+          transform: translateX(100%);
+          transition: all 0.3s ease;
+        `;
+
+        const iconClass = type === 'success' ? 'bi-check-circle' : 
+                         type === 'error' ? 'bi-exclamation-triangle' : 
+                         'bi-info-circle';
+
+        toast.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="bi ${iconClass}"></i>
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; margin-left: auto; cursor: pointer;">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        `;
+
+        // Add to body
+        document.body.appendChild(toast);
+
+        // Show toast with animation
+        setTimeout(() => {
+          toast.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Auto hide after specified duration
+        setTimeout(() => {
+          if (toast.parentElement) {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+          }
+        }, duration);
+      }
+
+      function showSuccessToast(message) {
+        showToast(message, 'success');
+      }
+
+      function showErrorToast(message) {
+        showToast(message, 'error');
+      }
+
+      function showInfoToast(message) {
+        showToast(message, 'info');
+      }
+
       function hideConfirmModal() {
         const modal = document.getElementById("confirmModal");
         modal.classList.remove("show");
@@ -1163,6 +1378,218 @@
             Batal
           </button>
           <button id="confirmModalConfirm" class="btn btn-primary">Ya</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Tambah Akun -->
+    <div
+      class="modal fade"
+      id="tambahAkunModal"
+      tabindex="-1"
+      aria-labelledby="tambahAkunModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="tambahAkunModalLabel">
+              <i class="bi bi-person-plus-fill me-2"></i>Tambah Akun Baru
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="tambahAkunForm">
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="namaUser" class="form-label fw-bold">
+                    <i class="bi bi-person me-2"></i>Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="namaUser"
+                    name="Nama"
+                    placeholder="Masukkan nama lengkap"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="emailUser" class="form-label fw-bold">
+                    <i class="bi bi-envelope me-2"></i>Email
+                  </label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="emailUser"
+                    name="Email"
+                    placeholder="contoh@email.com"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="passwordUser" class="form-label fw-bold">
+                    <i class="bi bi-lock me-2"></i>Password
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="passwordUser"
+                    name="Password"
+                    placeholder="Minimal 6 karakter"
+                    required
+                    minlength="6"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="noTelpUser" class="form-label fw-bold">
+                    <i class="bi bi-phone me-2"></i>No. Telepon
+                  </label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="noTelpUser"
+                    name="No_telp"
+                    placeholder="08xxxxxxxxxx"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="alamatUser" class="form-label fw-bold">
+                  <i class="bi bi-geo-alt me-2"></i>Alamat
+                </label>
+                <textarea
+                  class="form-control"
+                  id="alamatUser"
+                  name="Alamat"
+                  rows="3"
+                  placeholder="Masukkan alamat lengkap"
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="roleUser" class="form-label fw-bold">
+                  <i class="bi bi-shield-check me-2"></i>Role
+                </label>
+                <select class="form-select" id="roleUser" name="Role" required>
+                  <option value="penyewa">Penyewa</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <div class="form-text">
+                  Pilih role untuk menentukan hak akses pengguna
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-x-circle me-2"></i>Batal
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle me-2"></i>Tambah Akun
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Edit Akun -->
+    <div
+      class="modal fade"
+      id="editAkunModal"
+      tabindex="-1"
+      aria-labelledby="editAkunModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editAkunModalLabel">
+              <i class="bi bi-pencil-square me-2"></i>Edit Akun
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form id="editAkunForm">
+            <input type="hidden" id="editEmailUser" name="Email" />
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="editNamaUser" class="form-label fw-bold">
+                    <i class="bi bi-person me-2"></i>Nama Lengkap
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="editNamaUser"
+                    name="Nama"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="editNoTelpUser" class="form-label fw-bold">
+                    <i class="bi bi-phone me-2"></i>No. Telepon
+                  </label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="editNoTelpUser"
+                    name="No_telp"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="editAlamatUser" class="form-label fw-bold">
+                  <i class="bi bi-geo-alt me-2"></i>Alamat
+                </label>
+                <textarea
+                  class="form-control"
+                  id="editAlamatUser"
+                  name="Alamat"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="editRoleUser" class="form-label fw-bold">
+                  <i class="bi bi-shield-check me-2"></i>Role
+                </label>
+                <select class="form-select" id="editRoleUser" name="Role" required>
+                  <option value="penyewa">Penyewa</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                <i class="bi bi-x-circle me-2"></i>Batal
+              </button>
+              <button type="submit" class="btn btn-warning">
+                <i class="bi bi-check-circle me-2"></i>Update Akun
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

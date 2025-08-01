@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Riwayat Pembayaran - Kost Mewah Patemon Gombong</title>
+    <link rel="icon" href="../image/logo.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap"
       rel="stylesheet"
@@ -1020,7 +1021,7 @@
             return;
           }
 
-          const response = await fetch('http://localhost:3000/api/my-monthly-payments', {
+          const response = await fetch('http://localhost:3000/api/payments/my-monthly-payments', {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -1214,7 +1215,7 @@
           if (filterBulan) params.append('month', filterBulan);
           if (filterStatus) params.append('status', filterStatus);
 
-          const response = await fetch(`http://localhost:3000/api/my-monthly-payments?${params.toString()}`, {
+          const response = await fetch(`http://localhost:3000/api/payments/my-monthly-payments?${params.toString()}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -1273,26 +1274,12 @@
             </span>
           </div>
           <div class="detail-row">
-            <span class="detail-label">Tanggal Jatuh Tempo:</span>
-            <span class="detail-value">${formatDate(
-              payment.tanggalJatuhTempo
-            )}</span>
-          </div>
-          <div class="detail-row">
             <span class="detail-label">Tanggal Pembayaran:</span>
             <span class="detail-value">${
               payment.tanggalBayar
                 ? formatDate(payment.tanggalBayar)
                 : "Belum dibayar"
             }</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Metode Pembayaran:</span>
-            <span class="detail-value">${payment.metodePembayaran || "-"}</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">Nomor Referensi:</span>
-            <span class="detail-value">${payment.nomorReferensi || "-"}</span>
           </div>
           ${
             payment.status === "belum"

@@ -9,6 +9,9 @@ router.get("/available", KamarController.getAvailable);
 router.get("/:id", KamarController.getById);
 
 // Admin routes (protected + admin only)
+router.post("/", authenticateToken, requireAdmin, KamarController.create);
+router.put("/:id", authenticateToken, requireAdmin, KamarController.update);
+router.delete("/:id", authenticateToken, requireAdmin, KamarController.delete);
 router.put(
   "/:id/availability",
   authenticateToken,

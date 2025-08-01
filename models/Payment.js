@@ -64,11 +64,10 @@ class Payment {
         INSERT INTO pembayaran (
           ID_Reservasi, 
           Tanggal_Bayar, 
-          Jumlah_Bayar, 
+          Jumlah, 
           Bukti_Pembayaran, 
-          Status,
-          periode
-        ) VALUES (?, ?, ?, ?, ?, ?)
+          Status
+        ) VALUES (?, ?, ?, ?, ?)
       `;
 
       const [result] = await pool.execute(query, [
@@ -77,7 +76,6 @@ class Payment {
         amount,
         buktiPath,
         Status,
-        paymentPeriode,
       ]);
 
       return {
@@ -449,25 +447,22 @@ class Payment {
         SELECT 
           p.ID_Pembayaran,
           p.ID_Reservasi,
-          p.Periode_Tahun,
-          p.Periode_Bulan,
+          YEAR(p.Created_At) as Periode_Tahun,
+          MONTH(p.Created_At) as Periode_Bulan,
           p.Tanggal_Bayar,
-          p.Tanggal_Jatuh_Tempo,
           p.Jumlah,
-          p.Metode_Pembayaran,
-          p.Nomor_Referensi,
           p.Status,
           r.No_Kamar,
           k.Nama_Kamar,
           u.Nama as Nama_Penyewa,
           r.Tanggal_Reservasi,
-          MONTHNAME(STR_TO_DATE(p.Periode_Bulan, '%m')) as nama_bulan
+          MONTHNAME(p.Created_At) as nama_bulan
         FROM pembayaran p
         JOIN reservasi r ON p.ID_Reservasi = r.ID_Reservasi
         JOIN kamar k ON r.No_Kamar = k.No_Kamar
         JOIN user u ON r.Email = u.Email
         WHERE r.Email = ?
-        ORDER BY p.Periode_Tahun DESC, p.Periode_Bulan DESC, p.Tanggal_Bayar DESC
+        ORDER BY Periode_Tahun DESC, Periode_Bulan DESC, p.Tanggal_Bayar DESC
         LIMIT 12
       `;
 
@@ -492,29 +487,24 @@ class Payment {
 
       let query = `
         SELECT 
-          p.ID_Pembayaran,
-          p.ID_Reservasi,
-          p.Periode_Tahun,
-          p.Periode_Bulan,
-          p.Tanggal_Bayar,
-          p.Tanggal_Jatuh_Tempo,
-          p.Jumlah,
-          p.Metode_Pembayaran,
-          p.Nomor_Referensi,
-          p.Status,
-          r.No_Kamar,
-          k.Nama_Kamar,
-          u.Nama as Nama_Penyewa,
-          r.Tanggal_Reservasi,
-          p.Periode_Tahun as tahun,
-          p.Periode_Bulan as bulan,
-          MONTHNAME(STR_TO_DATE(p.Periode_Bulan, '%m')) as nama_bulan,
+          p.ID_Pembayaran as id,
+          p.ID_Reservasi as reservasiId,
+          YEAR(p.Created_At) as tahun,
+          MONTH(p.Created_At) as bulan,
+          p.Tanggal_Bayar as tanggalBayar,
+          p.Jumlah as jumlah,
+          p.Status as status,
+          r.No_Kamar as nomorKamar,
+          k.Nama_Kamar as namaKamar,
+          u.Nama as namaPenyewa,
+          r.Tanggal_Reservasi as tanggalReservasi,
+          MONTHNAME(p.Created_At) as namaBulan,
           CASE 
             WHEN p.Status = 'Diterima' THEN 'lunas'
             WHEN p.Status = 'Belum Bayar' THEN 'belum'
             WHEN p.Status = 'Menunggu' THEN 'pending'
             ELSE LOWER(p.Status)
-          END as status_formatted
+          END as statusFormatted
         FROM pembayaran p
         JOIN reservasi r ON p.ID_Reservasi = r.ID_Reservasi
         JOIN kamar k ON r.No_Kamar = k.No_Kamar
@@ -526,12 +516,12 @@ class Payment {
 
       // Add filters
       if (year) {
-        query += ` AND p.Periode_Tahun = ?`;
+        query += ` AND YEAR(p.Created_At) = ?`;
         params.push(year);
       }
 
       if (month) {
-        query += ` AND p.Periode_Bulan = ?`;
+        query += ` AND MONTH(p.Created_At) = ?`;
         params.push(month);
       }
 
@@ -547,38 +537,35 @@ class Payment {
         }
       }
 
-      query += ` ORDER BY p.Periode_Tahun DESC, p.Periode_Bulan DESC, p.Tanggal_Bayar DESC`;
+      query += ` ORDER BY tahun DESC, bulan DESC, p.Tanggal_Bayar DESC`;
 
       const [rows] = await pool.execute(query, params);
 
       // Transform data to match frontend format
       const transformedRows = rows.map((row) => {
         return {
-          id: row.ID_Pembayaran,
-          periode: row.nama_bulan
-            ? `${row.nama_bulan} ${row.tahun}`
-            : `${row.Periode_Bulan}/${row.Periode_Tahun}`,
+          id: row.id,
+          periode: row.namaBulan
+            ? `${row.namaBulan} ${row.tahun}`
+            : `${row.bulan}/${row.tahun}`,
           bulan: row.bulan ? row.bulan.toString().padStart(2, "0") : "00",
           tahun: row.tahun ? row.tahun.toString() : "0000",
-          jumlah: parseFloat(row.Jumlah || 0),
-          status: row.status_formatted,
-          tanggalBayar: row.Tanggal_Bayar
-            ? row.Tanggal_Bayar.toISOString().split("T")[0]
+          jumlah: parseFloat(row.jumlah || 0),
+          status: row.statusFormatted,
+          tanggalBayar: row.tanggalBayar
+            ? new Date(row.tanggalBayar).toISOString().split("T")[0]
             : null,
-          tanggalJatuhTempo: row.Tanggal_Jatuh_Tempo
-            ? row.Tanggal_Jatuh_Tempo.toISOString().split("T")[0]
+          tanggalJatuhTempo: row.tanggalJatuhTempo
+            ? new Date(row.tanggalJatuhTempo).toISOString().split("T")[0]
             : null,
-          metodePembayaran: row.Metode_Pembayaran || "Transfer Bank",
+          metodePembayaran: row.metodePembayaran || "Transfer Bank",
           nomorReferensi:
-            row.Nomor_Referensi ||
+            row.nomorReferensi ||
             `TRX${row.tahun || "2025"}${(row.bulan || 1)
               .toString()
-              .padStart(2, "0")}${row.ID_Pembayaran.toString().padStart(
-              6,
-              "0"
-            )}`,
-          namaKamar: row.Nama_Kamar,
-          nomorKamar: row.No_Kamar,
+              .padStart(2, "0")}${row.id.toString().padStart(6, "0")}`,
+          namaKamar: row.namaKamar,
+          nomorKamar: row.nomorKamar,
         };
       });
 

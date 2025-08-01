@@ -38,7 +38,9 @@ class PaymentController {
         });
       }
 
-      const buktiPembayaranPath = req.file.path;
+      const buktiPembayaranPath = path
+        .join("uploads", "bukti_pembayaran", req.file.filename)
+        .replace(/\\/g, "/");
 
       const result = await Payment.createMonthlyPayment(
         reservationId,
@@ -86,7 +88,9 @@ class PaymentController {
           message: "Bukti pembayaran is required",
         });
       }
-      const buktiPembayaranPath = req.file.path;
+      const buktiPembayaranPath = path
+        .join("uploads", "bukti_pembayaran", req.file.filename)
+        .replace(/\\/g, "/");
       // Get current payment data to delete old file
       const currentPayment = await Payment.getPaymentById(paymentId);
       if (
@@ -382,7 +386,9 @@ class PaymentController {
 
       // Add bukti pembayaran file path if uploaded
       if (req.file) {
-        paymentData.Bukti_Pembayaran = req.file.path;
+        paymentData.Bukti_Pembayaran = path
+          .join("uploads", "bukti_pembayaran", req.file.filename)
+          .replace(/\\/g, "/");
       }
 
       const result = await Payment.createPaymentLegacy(paymentData);
@@ -526,6 +532,33 @@ class PaymentController {
       res.status(500).json({
         success: false,
         message: "Failed to get generation history",
+        error: error.message,
+      });
+    }
+  }
+
+  // Verify payment (Admin only)
+  static async verifyPayment(req, res) {
+    try {
+      const { paymentId } = req.params;
+      const { status = "Diterima" } = req.body;
+
+      const result = await Payment.updatePaymentStatus(paymentId, status);
+
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+
+      res.json({
+        success: true,
+        message: "Payment verified successfully",
+        data: result.data,
+      });
+    } catch (error) {
+      console.error("Verify payment error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to verify payment",
         error: error.message,
       });
     }
