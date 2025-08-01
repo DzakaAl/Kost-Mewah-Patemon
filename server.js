@@ -92,6 +92,38 @@ app.get("/reservasi", (req, res) => {
   res.sendFile(path.join(__dirname, "pages", "reservasi.html"));
 });
 
+app.get("/akun", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "akun.html"));
+});
+
+app.get("/home", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "home.html"));
+});
+
+app.get("/admin-pembayaran", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-pembayaran.html"));
+});
+
+app.get("/admin-reservasi", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-reservasi.html"));
+});
+
+app.get("/admin-pending-reservasi", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-pending-reservasi.html"));
+});
+
+app.get("/data-kamar-admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "data-kamar-admin.html"));
+});
+
+app.get("/user-admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "user-admin.html"));
+});
+
+app.get("/riwayat-pembayaran", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "riwayat-pembayaran.html"));
+});
+
 // 404 handler
 app.use("*", (req, res) => {
   res.status(404).json({
