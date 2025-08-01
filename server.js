@@ -42,8 +42,13 @@ app.use("/css", express.static("css"));
 app.use("/js", express.static("js"));
 app.use("/Image", express.static("Image"));
 
-// Welcome route
+// Root route - serve home page
 app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "home.html"));
+});
+
+// API info route
+app.get("/api", (req, res) => {
   res.json({
     message: "Welcome to Kost Patemon API - Enhanced Payment System",
     version: "2.0.0",
@@ -64,6 +69,27 @@ app.get("/", (req, res) => {
       unifiedPaymentAPI: "Single payment management system",
     },
   });
+});
+
+// Additional page routes
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "admin-dashboard.html"));
+});
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "login.html"));
+});
+
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "register.html"));
+});
+
+app.get("/kamar", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "kamar.html"));
+});
+
+app.get("/reservasi", (req, res) => {
+  res.sendFile(path.join(__dirname, "pages", "reservasi.html"));
 });
 
 // 404 handler

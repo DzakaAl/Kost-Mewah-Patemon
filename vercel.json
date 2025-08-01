@@ -12,6 +12,26 @@
       "dest": "/server.js"
     },
     {
+      "src": "/uploads/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/Image/(.*)",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/pages/(.*)",
+      "dest": "/server.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/server.js"
     }
