@@ -9,8 +9,6 @@
     "setup": "node setup.js",
     "build": "echo 'Build complete'",
     "vercel-build": "echo 'Vercel build complete'",
-    "heroku-postbuild": "node setup-heroku-db.js",
-    "setup-heroku": "node setup-heroku-db.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
