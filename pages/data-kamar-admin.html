@@ -1024,7 +1024,7 @@
             
             try {
               const token = localStorage.getItem('token');
-              const response = await fetch('http://localhost:3000/api/kamar', {
+              const response = await fetch('https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar', {
                 method: 'POST',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -1066,7 +1066,7 @@
             
             try {
               const token = localStorage.getItem('token');
-              const response = await fetch(`http://localhost:3000/api/kamar/${kamarId}`, {
+              const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar/${kamarId}`, {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -1249,7 +1249,7 @@
             return;
           }
           
-          const response = await fetch('http://localhost:3000/api/kamar', {
+          const response = await fetch('https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
@@ -1358,7 +1358,7 @@
       async function editKamar(kamarId) {
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:3000/api/kamar/${kamarId}`, {
+          const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar/${kamarId}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -1401,7 +1401,7 @@
           async function() {
             try {
               const token = localStorage.getItem('token');
-              const response = await fetch(`http://localhost:3000/api/kamar/${kamarId}`, {
+              const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar/${kamarId}`, {
                 method: 'DELETE',
                 headers: {
                   'Authorization': `Bearer ${token}`

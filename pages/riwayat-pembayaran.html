@@ -1021,7 +1021,7 @@
             return;
           }
 
-          const response = await fetch('http://localhost:3000/api/payments/my-monthly-payments', {
+          const response = await fetch('https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/my-monthly-payments', {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -1215,7 +1215,7 @@
           if (filterBulan) params.append('month', filterBulan);
           if (filterStatus) params.append('status', filterStatus);
 
-          const response = await fetch(`http://localhost:3000/api/payments/my-monthly-payments?${params.toString()}`, {
+          const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/my-monthly-payments?${params.toString()}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,

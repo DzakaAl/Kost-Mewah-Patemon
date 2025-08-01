@@ -1949,7 +1949,7 @@
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            "http://localhost:3000/api/auth/admin/dashboard-stats",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/auth/admin/dashboard-stats",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -2026,7 +2026,7 @@
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            "http://localhost:3000/api/reservasi/admin/with-payments",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/admin/with-payments",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -2416,7 +2416,7 @@
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            "http://localhost:3000/api/scheduler/status",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/scheduler/status",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -2466,7 +2466,7 @@
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            "http://localhost:3000/api/scheduler/start",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/scheduler/start",
             {
               method: "POST",
               headers: {
@@ -2496,7 +2496,7 @@
             try {
               const token = localStorage.getItem("token");
               const response = await fetch(
-                "http://localhost:3000/api/scheduler/stop",
+                "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/scheduler/stop",
                 {
                   method: "POST",
                   headers: {
@@ -2555,7 +2555,7 @@
             try {
               const token = localStorage.getItem("token");
               const response = await fetch(
-                "http://localhost:3000/api/payments/generate-manual",
+                "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/generate-manual",
                 {
                   method: "POST",
                   headers: {

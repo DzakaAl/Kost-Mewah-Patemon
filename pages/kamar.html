@@ -1233,7 +1233,7 @@
       async function loadKamar() {
         const container = document.getElementById("kamar-swiper");
         try {
-          const res = await fetch("http://localhost:3000/api/kamar");
+          const res = await fetch("https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar");
           const data = await res.json();
           if (!data.success) throw new Error("Gagal mengambil data kamar");
 

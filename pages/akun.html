@@ -1783,7 +1783,7 @@
           try {
             // Fetch data lengkap user dari database
             const response = await authFetch(
-              "http://localhost:3000/api/auth/profile"
+              "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/auth/profile"
             );
 
             if (response && response.ok) {
@@ -1817,7 +1817,7 @@
                     userData.Foto !== "null" &&
                     userData.Foto !== ""
                   ) {
-                    avatarElement.src = `http://localhost:3000${userData.Foto}`;
+                    avatarElement.src = `https://kost-patemon-b2b29d8c205a.herokuapp.com${userData.Foto}`;
                   } else {
                     avatarElement.src = "../Image/image.png";
                   }
@@ -1861,7 +1861,7 @@
           // Update avatar jika ada foto
           const userFoto = localStorage.getItem("userFoto");
           if (userFoto && userFoto !== "null" && userFoto !== "") {
-            avatarElement.src = `http://localhost:3000${userFoto}`;
+            avatarElement.src = `https://kost-patemon-b2b29d8c205a.herokuapp.com${userFoto}`;
           } else {
             avatarElement.src = "../Image/image.png";
           }
@@ -1884,7 +1884,7 @@
       async function loadReservationStatus(userEmail) {
         try {
           const response = await authFetch(
-            `http://localhost:3000/api/reservasi/user/${userEmail}`
+            `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/user/${userEmail}`
           );
 
           if (response && response.ok) {
@@ -2055,7 +2055,7 @@
 
           // Fetch data terbaru dari database
           const response = await authFetch(
-            "http://localhost:3000/api/auth/profile"
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/auth/profile"
           );
 
           if (response && response.ok) {
@@ -2078,7 +2078,7 @@
                 userData.Foto !== "null" &&
                 userData.Foto !== ""
               ) {
-                currentPic.src = `http://localhost:3000${userData.Foto}`;
+                currentPic.src = `https://kost-patemon-b2b29d8c205a.herokuapp.com${userData.Foto}`;
               } else {
                 currentPic.src = "../Image/image.png";
               }
@@ -2119,7 +2119,7 @@
         const currentPic = document.getElementById("currentProfilePic");
         const userFoto = localStorage.getItem("userFoto");
         if (userFoto && userFoto !== "null" && userFoto !== "") {
-          currentPic.src = `http://localhost:3000${userFoto}`;
+          currentPic.src = `https://kost-patemon-b2b29d8c205a.herokuapp.com${userFoto}`;
         } else {
           currentPic.src = "../Image/image.png";
         }
@@ -2140,7 +2140,7 @@
         const currentPic = document.getElementById("currentProfilePic");
         const userFoto = localStorage.getItem("userFoto");
         if (userFoto && userFoto !== "null" && userFoto !== "") {
-          currentPic.src = `http://localhost:3000${userFoto}`;
+          currentPic.src = `https://kost-patemon-b2b29d8c205a.herokuapp.com${userFoto}`;
         } else {
           currentPic.src = "../Image/image.png";
         }
@@ -2209,7 +2209,7 @@
 
           // Make API request
           const response = await authFetch(
-            "http://localhost:3000/api/auth/profile",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/auth/profile",
             {
               method: "PUT",
               body: formData,
@@ -2328,7 +2328,7 @@
 
         try {
           const response = await authFetch(
-            "http://localhost:3000/api/auth/change-password",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/auth/change-password",
             {
               method: "PUT",
               headers: {
@@ -2412,7 +2412,7 @@
             try {
               // Get user's reservation data
               const response = await authFetch(
-                `http://localhost:3000/api/reservasi/user/${userEmail}`
+                `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/user/${userEmail}`
               );
 
               if (response && response.ok) {
@@ -2432,7 +2432,7 @@
                   // Only use method 1: unpaid payment
                   try {
                     const paymentResponse = await authFetch(
-                      `http://localhost:3000/api/payments/unpaid/${reservationData.ID_Reservasi}`
+                      `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/unpaid/${reservationData.ID_Reservasi}`
                     );
                     if (paymentResponse && paymentResponse.ok) {
                       const paymentResult = await paymentResponse.json();
@@ -2816,7 +2816,7 @@
           let latestReservation = null;
           try {
             const reservationResponse = await authFetch(
-              `http://localhost:3000/api/reservasi/user/${userEmail}`
+              `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/user/${userEmail}`
             );
             if (!reservationResponse || !reservationResponse.ok) {
               showAlert("Gagal memuat data reservasi", "danger");
@@ -2834,7 +2834,7 @@
             latestReservation = reservationResult.data[0];
             // Get unpaid payment
             const paymentResponse = await authFetch(
-              `http://localhost:3000/api/payments/unpaid/${latestReservation.ID_Reservasi}`
+              `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/unpaid/${latestReservation.ID_Reservasi}`
             );
             if (!paymentResponse || !paymentResponse.ok) {
               showAlert("Gagal memuat data pembayaran", "danger");
@@ -2868,7 +2868,7 @@
           formData.append("bukti_pembayaran", file);
 
           const response = await authFetch(
-            `http://localhost:3000/api/payments/${foundPaymentId}/upload-proof`,
+            `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/payments/${foundPaymentId}/upload-proof`,
             {
               method: "PUT",
               body: formData,

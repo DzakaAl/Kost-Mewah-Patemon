@@ -906,7 +906,7 @@
             return;
           }
 
-          const response = await fetch("http://localhost:3000/api/users", {
+          const response = await fetch("https://kost-patemon-b2b29d8c205a.herokuapp.com/api/users", {
             headers: {
               "Authorization": `Bearer ${token}`,
               "Content-Type": "application/json"
@@ -1034,7 +1034,7 @@
       async function editUser(userEmail) {
         try {
           const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:3000/api/users/${encodeURIComponent(userEmail)}`, {
+          const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/users/${encodeURIComponent(userEmail)}`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -1076,7 +1076,7 @@
             async function() {
               try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/users/${encodeURIComponent(userEmail)}`, {
+                const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/users/${encodeURIComponent(userEmail)}`, {
                   method: 'DELETE',
                   headers: {
                     'Authorization': `Bearer ${token}`
@@ -1146,7 +1146,7 @@
             
             try {
               const token = localStorage.getItem('token');
-              const response = await fetch('http://localhost:3000/api/users', {
+              const response = await fetch('https://kost-patemon-b2b29d8c205a.herokuapp.com/api/users', {
                 method: 'POST',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -1189,7 +1189,7 @@
             
             try {
               const token = localStorage.getItem('token');
-              const response = await fetch(`http://localhost:3000/api/users/${encodeURIComponent(email)}`, {
+              const response = await fetch(`https://kost-patemon-b2b29d8c205a.herokuapp.com/api/users/${encodeURIComponent(email)}`, {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,

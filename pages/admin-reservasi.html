@@ -983,7 +983,7 @@
 
           // Load kamar options
           const kamarResponse = await fetch(
-            "http://localhost:3000/api/kamar/",
+            "https://kost-patemon-b2b29d8c205a.herokuapp.com/api/kamar/",
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -1094,7 +1094,7 @@
 
           // Get reservations with payment info
           const response = await fetch(
-            `http://localhost:3000/api/reservasi/admin/with-payments?${urlParams}`,
+            `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/admin/with-payments?${urlParams}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -1376,7 +1376,7 @@
         try {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            `http://localhost:3000/api/reservasi/${reservasiId}/status`,
+            `https://kost-patemon-b2b29d8c205a.herokuapp.com/api/reservasi/${reservasiId}/status`,
             {
               method: "PUT",
               headers: {
